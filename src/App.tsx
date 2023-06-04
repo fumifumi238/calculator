@@ -2,45 +2,46 @@ import React, { useState } from "react";
 import "./App.css";
 
 const App = () => {
-  const [inputNumber, setInputNumber] = useState<number>(0);
+  const [inputNumber, setInputNumber] = useState<string>("");
   const [isInteger, setIsInteger] = useState<boolean>(true);
-
-  const options = ["0", "00", "."];
   const calcs = ["+", "-", "x", "÷"];
 
-  const onClickNumber = (i: number) => {
-    if (inputNumber > 99999999) {
+  const onClickNumber = (number: string) => {
+    if (inputNumber.length > 8) {
       return;
     }
 
-    setInputNumber((prevResult) => prevResult * 10 + i);
-  };
-
-  const onClickOption = (option: string) => {
-    if (option === "0") {
-      setInputNumber((prevResult) => prevResult * 10);
+    if (number === "00" && inputNumber.length > 7) {
       return;
     }
 
-    if (option === "00") {
-      setInputNumber((prevResult) => prevResult * 100);
+    if (number === ".") {
+      if (!isInteger && inputNumber[inputNumber.length - 1] === ".") {
+        setIsInteger(true);
+        setInputNumber((inputNumber) => inputNumber.slice(0, -1));
+      }
+
+      if (isInteger && inputNumber.length > 0 && inputNumber.length <= 7) {
+        setIsInteger(false);
+        setInputNumber((inputNumber) => inputNumber + ".");
+      }
       return;
     }
 
-    if (option === ".") {
-      setIsInteger(!isInteger);
-    }
+    setInputNumber((prevResult) => prevResult + number);
   };
 
   const resetResult = () => {
-    setInputNumber(0);
+    setInputNumber("");
+    setIsInteger(true);
   };
 
   const Numbers: React.FC<{ i: number }> = ({ i }) => {
-    const numbers = [
-      [1, 2, 3],
-      [4, 5, 6],
-      [7, 8, 9],
+    const numbers: string[][] = [
+      ["1", "2", "3"],
+      ["4", "5", "6"],
+      ["7", "8", "9"],
+      ["0", "00", "."],
     ];
     return (
       <div>
@@ -74,34 +75,11 @@ const App = () => {
   return (
     <div>
       <p>{inputNumber}</p>
-      {!isInteger && <p>.</p>}
       <button onClick={resetResult}>Reset</button>
       <div>
-        {[0, 1, 2].map((number) => (
+        {[0, 1, 2, 3].map((number) => (
           <Numbers i={number} />
         ))}
-        <ul
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: 0,
-          }}>
-          {options.map((option) => (
-            <li
-              onClick={() => onClickOption(option)}
-              style={{
-                listStyle: "none",
-                padding: "15px",
-                border: "solid",
-                fontSize: "16px",
-                textAlign: "center",
-                width: "20px",
-              }}>
-              {option}
-            </li>
-          ))}
-        </ul>
       </div>
       <div
         style={{
@@ -125,6 +103,6 @@ const App = () => {
       </div>
     </div>
   );
-};
+};;;
 
 export default App;
