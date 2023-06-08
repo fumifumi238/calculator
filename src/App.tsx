@@ -24,24 +24,25 @@ const App = () => {
   };
 
   const calcNumbers = (calc: SelectedCalc) => {
+    let calcResult = "0";
     switch (calc) {
       case "+":
-        setResult((result) => String(Number(result) + Number(inputNumber)));
-        setInputNumber("0");
+        calcResult = String(Number(result) + Number(inputNumber));
         break;
       case "-":
-        setResult((result) => String(Number(result) - Number(inputNumber)));
-        setInputNumber("0");
+        calcResult = String(Number(result) - Number(inputNumber));
         break;
       case "x":
-        setResult((result) => String(Number(result) * Number(inputNumber)));
-        setInputNumber("0");
+        calcResult = String(Number(result) * Number(inputNumber));
         break;
       case "÷":
-        setResult((result) => String(Number(result) / Number(inputNumber)));
-        setInputNumber("0");
+        calcResult = String(Number(result) / Number(inputNumber));
         break;
     }
+    setResult(calcResult);
+    setInputNumber("0");
+
+    return calcResult;
   };
 
   const onClickCalc = (calc: SelectedCalc) => {
@@ -57,10 +58,9 @@ const App = () => {
   };
 
   const onClickEqual = () => {
-    calcNumbers(selectedCalc);
+    const calcResult = calcNumbers(selectedCalc);
     setSelectedCalc("");
-    setVisibleResult(true);
-    setInputNumber("0");
+    setInputNumber(calcResult);
   };
 
   return (
