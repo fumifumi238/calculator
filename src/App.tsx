@@ -1,86 +1,86 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
+import NumbersPunnel from "./components/NumbersPunel";
 
 const App = () => {
-  const [inputNumber, setInputNumber] = useState<string>("");
+  type SelectedCalc = "+" | "-" | "x" | "÷" | "";
+  const [inputNumber, setInputNumber] = useState<string>("0");
+  const [result, setResult] = useState<string>("0");
   const [isInteger, setIsInteger] = useState<boolean>(true);
-  const calcs = ["+", "-", "x", "÷"];
+  const [selectedCalc, setSelectedCalc] = useState<SelectedCalc>("");
+  const calcs: SelectedCalc[] = ["+", "-", "x", "÷"];
 
-  const onClickNumber = (number: string) => {
-    if (inputNumber.length > 8) {
-      return;
-    }
+  const [visibleResult, setVisibleResult] = useState<boolean>(false);
 
-    if (number === "00" && inputNumber.length > 7) {
-      return;
-    }
-
-    if (number === ".") {
-      if (!isInteger && inputNumber[inputNumber.length - 1] === ".") {
-        setIsInteger(true);
-        setInputNumber((inputNumber) => inputNumber.slice(0, -1));
-      }
-
-      if (isInteger && inputNumber.length > 0 && inputNumber.length <= 7) {
-        setIsInteger(false);
-        setInputNumber((inputNumber) => inputNumber + ".");
-      }
-      return;
-    }
-
-    setInputNumber((prevResult) => prevResult + number);
-  };
+  useEffect(() => {
+    setVisibleResult(true);
+  }, [result]);
 
   const resetResult = () => {
-    setInputNumber("");
+    setInputNumber("0");
+    setResult("0");
+    setSelectedCalc("");
     setIsInteger(true);
   };
 
-  const Numbers: React.FC<{ i: number }> = ({ i }) => {
-    const numbers: string[][] = [
-      ["1", "2", "3"],
-      ["4", "5", "6"],
-      ["7", "8", "9"],
-      ["0", "00", "."],
-    ];
-    return (
-      <div>
-        <ul
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: 0,
-          }}>
-          {numbers[i].map((number) => (
-            <li
-              key={number}
-              style={{
-                listStyle: "none",
-                padding: "15px",
-                border: "solid",
-                fontSize: "16px",
-                textAlign: "center",
-                width: "20px",
-              }}
-              onClick={() => onClickNumber(number)}>
-              {number}
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
+  const calcNumbers = (calc: SelectedCalc) => {
+    switch (calc) {
+      case "+":
+        setResult((result) => String(Number(result) + Number(inputNumber)));
+        setInputNumber("0");
+        break;
+      case "-":
+        setResult((result) => String(Number(result) - Number(inputNumber)));
+        setInputNumber("0");
+        break;
+      case "x":
+        setResult((result) => String(Number(result) * Number(inputNumber)));
+        setInputNumber("0");
+        break;
+      case "÷":
+        setResult((result) => String(Number(result) / Number(inputNumber)));
+        setInputNumber("0");
+        break;
+    }
+  };
+
+  const onClickCalc = (calc: SelectedCalc) => {
+    if (selectedCalc === "") {
+      setResult(inputNumber);
+      setSelectedCalc(calc);
+      setInputNumber("0");
+      return;
+    }
+
+    calcNumbers(selectedCalc);
+    setSelectedCalc(calc);
+  };
+
+  const onClickEqual = () => {
+    calcNumbers(selectedCalc);
+    setSelectedCalc("");
+    setVisibleResult(true);
+    setInputNumber("0");
   };
 
   return (
     <div>
-      <p>{inputNumber}</p>
+      <p>{visibleResult ? result : inputNumber}</p>
+      <p>{selectedCalc}</p>
       <button onClick={resetResult}>Reset</button>
       <div>
         {[0, 1, 2, 3].map((number) => (
-          <Numbers i={number} />
+          <NumbersPunnel
+            i={number}
+            inputNumber={inputNumber}
+            setInputNumber={setInputNumber}
+            isInteger={isInteger}
+            setIsInteger={setIsInteger}
+            setVisibleResult={setVisibleResult}
+          />
         ))}
       </div>
+      <p>result: {result}</p>
       <div
         style={{
           display: "flex",
@@ -90,6 +90,7 @@ const App = () => {
         }}>
         {calcs.map((calc) => (
           <p
+            onClick={() => onClickCalc(calc)}
             style={{
               listStyle: "none",
               padding: "15px",
@@ -101,8 +102,27 @@ const App = () => {
           </p>
         ))}
       </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: 0,
+        }}>
+        <p
+          onClick={onClickEqual}
+          style={{
+            listStyle: "none",
+            padding: "15px",
+            border: "solid",
+            fontSize: "16px",
+            width: "20px",
+          }}>
+          =
+        </p>
+      </div>
     </div>
   );
-};;;
+};
 
 export default App;
