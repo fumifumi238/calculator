@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import NumbersPunnel from "./components/NumbersPunel";
+import EqualPunnel from "./components/EqualPunnel";
+
+export type SelectedCalc = "+" | "-" | "x" | "÷" | "";
 
 const App = () => {
-  type SelectedCalc = "+" | "-" | "x" | "÷" | "";
   const [inputNumber, setInputNumber] = useState<string>("0");
   const [result, setResult] = useState<string>("0");
   const [isInteger, setIsInteger] = useState<boolean>(true);
@@ -57,20 +59,26 @@ const App = () => {
     setSelectedCalc(calc);
   };
 
-  const onClickEqual = () => {
-    const calcResult = calcNumbers(selectedCalc);
-    setSelectedCalc("");
-    setInputNumber(calcResult);
-  };
-
   return (
     <div>
-      <p>{visibleResult ? result : inputNumber}</p>
-      <p>{selectedCalc}</p>
-      <button onClick={resetResult}>Reset</button>
+      <div className="flex justify-center m-3">
+        <p>{visibleResult ? result : inputNumber}</p>
+        <p>{selectedCalc}</p>
+      </div>
+
+      <div className="flex justify-center items-center p-2">
+        <button
+          onClick={resetResult}
+          className="border
+border-black rounded p-2">
+          Reset
+        </button>
+      </div>
+
       <div>
         {[0, 1, 2, 3].map((number) => (
           <NumbersPunnel
+            key={number}
             i={number}
             inputNumber={inputNumber}
             setInputNumber={setInputNumber}
@@ -81,45 +89,23 @@ const App = () => {
         ))}
       </div>
       <p>result: {result}</p>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          margin: 0,
-        }}>
+      <div className="flex justify-center items-center m-0">
         {calcs.map((calc) => (
-          <p
-            onClick={() => onClickCalc(calc)}
-            style={{
-              listStyle: "none",
-              padding: "15px",
-              border: "solid",
-              fontSize: "16px",
-              width: "20px",
-            }}>
-            {calc}
-          </p>
+          <div
+            className="border-4 border-black text-center pb-1"
+            key={calc}
+            onClick={() => onClickCalc(calc)}>
+            <p className="m-6 w-4 h-4">{calc}</p>
+          </div>
         ))}
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          margin: 0,
-        }}>
-        <p
-          onClick={onClickEqual}
-          style={{
-            listStyle: "none",
-            padding: "15px",
-            border: "solid",
-            fontSize: "16px",
-            width: "20px",
-          }}>
-          =
-        </p>
+      <div className="flex justify-center items-center m-0 p-2">
+        <EqualPunnel
+          calcNumbers={calcNumbers}
+          selectedCalc={selectedCalc}
+          setSelectedCalc={setSelectedCalc}
+          setInputNumber={setInputNumber}
+        />
       </div>
     </div>
   );

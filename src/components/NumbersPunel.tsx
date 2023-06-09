@@ -52,30 +52,15 @@ const NumbersPunnel: React.FC<NumbersPunnelProps> = ({
     }
   };
   return (
-    <div>
-      <ul
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          margin: 0,
-        }}>
-        {numbers[i].map((number) => (
-          <li
-            key={number}
-            style={{
-              listStyle: "none",
-              padding: "15px",
-              border: "solid",
-              fontSize: "16px",
-              textAlign: "center",
-              width: "20px",
-            }}
-            onClick={() => onClickNumber(number)}>
-            {number}
-          </li>
-        ))}
-      </ul>
+    <div className="flex justify-center items-center m-0">
+      {numbers[i].map((number) => (
+        <div
+          key={number}
+          className="border-4 border-black text-center pb-1"
+          onClick={() => onClickNumber(number)}>
+          <p className="m-6 w-4 h-4">{number}</p>
+        </div>
+      ))}
     </div>
   );
 };
